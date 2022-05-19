@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NewsApp</string>
+    <string name="full_name">Вадим Петельский</string>
+    <string name="enter_message">Введите сообщение…</string>
+    <string name="send_message">Отправить сообщение</string>
+    <string name="java_text">Курсы по Java в Школе Hillel</string>
+    <string name="android_text">Android Udacity, Google, Metanit</string>
+    <string name="description">Вадим находится в разработке с 2016 года. Тогда был его первый старт в создании игрового сервера посредством языка программирования Lua. Впоследствии были некоторые изменения в интересах и он решил покинуть игровой опыт в 2019. Он перешёл на C# пытаясь создать приложение по тренировке английских слов и достаточно неплохо в этом преуспел. Позже Вадим ушёл в Java где решил посещать курсы обучения в 2021 и 2022 году. Там он и открыл для себя платформу Android.</string>
+    <string name="menu_action_switch">Об авторе</string>
+</resources>

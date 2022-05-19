@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="news_text">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:paddingTop">@dimen/padding_text</item>
+        <item name="android:paddingStart">@dimen/padding_text</item>
+        <item name="android:paddingEnd">@dimen/padding_text</item>
+    </style>
+</resources>

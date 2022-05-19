@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/padding_text"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tv_category"
+            style="@style/news_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-condensed-medium"
+            android:maxLines="1"
+            android:paddingStart="@dimen/padding_text"
+            android:paddingTop="@dimen/padding_text"
+            android:textAllCaps="true"
+            android:textSize="@dimen/category_text_size"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@tools:sample/full_names" />
+
+        <TextView
+            android:id="@+id/tv_title"
+            style="@style/news_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:maxLines="2"
+            android:textSize="@dimen/title_text_size"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/img_heading"
+            app:layout_constraintTop_toBottomOf="@id/tv_category"
+            tools:text="@tools:sample/full_names" />
+
+        <TextView
+            android:id="@+id/tv_preview_text"
+            style="@style/news_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/tv_title"
+            app:layout_constraintStart_toStartOf="@id/tv_title"
+            app:layout_constraintEnd_toStartOf="@id/img_heading"
+            android:maxLines="3"
+            android:textSize="@dimen/article_text_size"
+            tools:text="@tools:sample/lorem/random" />
+
+        <TextView
+            android:id="@+id/tv_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:paddingStart="@dimen/padding_text"
+            android:paddingTop="@dimen/padding_text"
+            android:paddingBottom="@dimen/padding_text"
+            android:textSize="@dimen/date_text_size"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_preview_text"
+            tools:text="@tools:sample/date/hhmmss" />
+
+        <ImageView
+            android:id="@+id/img_heading"
+            android:layout_width="@dimen/heading_size"
+            android:layout_height="@dimen/heading_size"
+            android:padding="@dimen/padding_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_title"
+            android:scaleType="centerCrop"
+            tools:src="@tools:sample/avatars"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

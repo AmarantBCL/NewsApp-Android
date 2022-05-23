@@ -1,5 +1,6 @@
 package com.example.android.androidacademyviews;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,21 +11,23 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.android.androidacademyviews.model.ArticleDTO;
+import com.example.android.androidacademyviews.model.NewsResponse;
 
 import java.util.List;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     private final LayoutInflater inflater;
-    private final List<NewsItem> news;
+    private final List<ArticleDTO> newsList;
     private final Context context;
     private final OnStateClickListener onClickListener;
 
     interface OnStateClickListener {
-        void onStateClick(NewsItem news, int position);
+        void onStateClick(ArticleDTO news, int position);
     }
 
-    public NewsAdapter(Context context, List<NewsItem> news, OnStateClickListener onClickListener) {
-        this.news = news;
+    public NewsAdapter(Context context, List<ArticleDTO> newsList, OnStateClickListener onClickListener) {
+        this.newsList = newsList;
         this.inflater = LayoutInflater.from(context);
         this.context = context;
         this.onClickListener = onClickListener;
@@ -37,25 +40,28 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(NewsAdapter.ViewHolder holder, int position) {
-        NewsItem newsItem = news.get(position);
-        Glide.with(context).load(newsItem.getImageUrl()).into(holder.headingView);
-        holder.categoryView.setText(newsItem.getCategory().getName());
+    public void onBindViewHolder(NewsAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
+        ArticleDTO newsItem = newsList.get(position);
+        if (newsItem.getImages().get(1) == null) {
+            holder.headingView.setImageResource(R.drawable.ic_baseline_image_24);
+        } else {
+            Glide.with(context).load(newsItem.getImages().get(1).getUrl()).into(holder.headingView);
+        }
+        if (newsItem.getCategory().isEmpty()) {
+            holder.categoryView.setText(newsItem.getSection());
+        } else {
+            holder.categoryView.setText(newsItem.getCategory());
+        }
         holder.titleView.setText(newsItem.getTitle());
         holder.previewTextView.setText(newsItem.getPreviewText());
         holder.dateView.setText(newsItem.getPublishDate().toString());
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onClickListener.onStateClick(newsItem, position);
-            }
-        });
+        holder.itemView.setOnClickListener(v -> onClickListener.onStateClick(newsItem, position));
     }
 
     @Override
     public int getItemCount() {
-        return news.size();
+        return newsList.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

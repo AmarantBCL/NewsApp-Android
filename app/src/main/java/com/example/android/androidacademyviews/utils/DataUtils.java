@@ -1,4 +1,7 @@
-package com.example.android.androidacademyviews;
+package com.example.android.androidacademyviews.utils;
+
+import com.example.android.androidacademyviews.model.NewsItem;
+import com.example.android.androidacademyviews.model.Category;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -6,6 +9,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 public class DataUtils {
+    @Deprecated
     public static List<NewsItem> generateNews() {
         final Category darwinAwards = new Category(1, "Darwin Awards");
         final Category criminal = new Category(2, "Criminal");

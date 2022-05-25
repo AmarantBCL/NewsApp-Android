@@ -1,4 +1,4 @@
-package com.example.android.androidacademyviews.model;
+package com.example.android.androidacademyviews.model.dto;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -18,6 +18,8 @@ public class ArticleDTO {
     private Date publishDate;
     @SerializedName("multimedia")
     private List<ImagesDTO> images;
+    @SerializedName("url")
+    private String url;
 
     public String getSection() {
         return section;
@@ -41,5 +43,9 @@ public class ArticleDTO {
 
     public List<ImagesDTO> getImages() {
         return images;
+    }
+
+    public String getUrl() {
+        return url;
     }
 }

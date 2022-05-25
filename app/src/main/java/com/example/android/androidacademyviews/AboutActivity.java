@@ -5,6 +5,8 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -14,7 +16,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class AboutActivity extends AppCompatActivity {
-    static final int REQUEST_IMAGE_OPEN = 1;
+    private static final int REQUEST_IMAGE_OPEN = 1;
+    private static final String KEY_AVATAR = "AboutActivity.KEY_AVATAR";
+
+    Uri uri;
 
     private ImageView imageView;
     private EditText edit;
@@ -28,6 +33,13 @@ public class AboutActivity extends AppCompatActivity {
         ImageView facebook = findViewById(R.id.img_facebook);
         ImageView telegram = findViewById(R.id.img_telegram);
         ImageView instagram = findViewById(R.id.img_instagram);
+
+        if (savedInstanceState != null) {
+            uri = savedInstanceState.getParcelable(KEY_AVATAR);
+            if (uri != null) {
+                imageView.setImageURI(uri); // TODO make it work
+            }
+        }
 
         facebook.setOnClickListener(v -> {
             Uri webpage = Uri.parse("https://ms-my.facebook.com/vadim.petelsky");
@@ -74,8 +86,31 @@ public class AboutActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_OPEN && resultCode == RESULT_OK) {
-            Uri fullPhotoUri = data.getData();
-            imageView.setImageURI(fullPhotoUri);
+            uri = data.getData();
+            imageView.setImageURI(uri);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putParcelable(KEY_AVATAR, uri);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_details, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_back:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }

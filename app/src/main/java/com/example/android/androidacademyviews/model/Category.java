@@ -1,5 +1,6 @@
-package com.example.android.androidacademyviews;
+package com.example.android.androidacademyviews.model;
 
+@Deprecated
 public class Category {
     private final int id;
     private final String name;

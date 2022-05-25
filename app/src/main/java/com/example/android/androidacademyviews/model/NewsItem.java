@@ -1,7 +1,8 @@
-package com.example.android.androidacademyviews;
+package com.example.android.androidacademyviews.model;
 
 import java.util.Date;
 
+@Deprecated
 public class NewsItem {
     private final String title;
     private final String imageUrl;

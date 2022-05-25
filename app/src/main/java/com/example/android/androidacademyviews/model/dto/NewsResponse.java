@@ -1,6 +1,8 @@
-package com.example.android.androidacademyviews.model;
+package com.example.android.androidacademyviews.model.dto;
 
 import androidx.annotation.Nullable;
+
+import com.example.android.androidacademyviews.model.dto.ArticleDTO;
 
 import java.util.List;
 

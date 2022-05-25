@@ -1,4 +1,4 @@
-package com.example.android.androidacademyviews;
+package com.example.android.androidacademyviews.viewmodel;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -11,8 +11,8 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.android.androidacademyviews.model.ArticleDTO;
-import com.example.android.androidacademyviews.model.NewsResponse;
+import com.example.android.androidacademyviews.R;
+import com.example.android.androidacademyviews.model.dto.ArticleDTO;
 
 import java.util.List;
 
@@ -20,13 +20,13 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     private final LayoutInflater inflater;
     private final List<ArticleDTO> newsList;
     private final Context context;
-    private final OnStateClickListener onClickListener;
+    private final OnNewsClickListener onClickListener;
 
-    interface OnStateClickListener {
+    public interface OnNewsClickListener {
         void onStateClick(ArticleDTO news, int position);
     }
 
-    public NewsAdapter(Context context, List<ArticleDTO> newsList, OnStateClickListener onClickListener) {
+    public NewsAdapter(Context context, List<ArticleDTO> newsList, OnNewsClickListener onClickListener) {
         this.newsList = newsList;
         this.inflater = LayoutInflater.from(context);
         this.context = context;

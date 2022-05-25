@@ -5,7 +5,7 @@
     <dimen name="basic_margin">16dp</dimen>
     <dimen name="padding_text">8dp</dimen>
     <dimen name="text_size">16sp</dimen>
-    <dimen name="margin_left">50dp</dimen>
+    <dimen name="margin_left">16dp</dimen>
     <dimen name="thin_line">1dp</dimen>
     <dimen name="thick_line">3dp</dimen>
     <dimen name="scroll_height">100dp</dimen>

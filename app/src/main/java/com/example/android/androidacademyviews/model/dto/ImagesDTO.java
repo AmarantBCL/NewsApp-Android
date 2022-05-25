@@ -1,4 +1,4 @@
-package com.example.android.androidacademyviews.model;
+package com.example.android.androidacademyviews.model.dto;
 
 public class ImagesDTO {
     private String url;

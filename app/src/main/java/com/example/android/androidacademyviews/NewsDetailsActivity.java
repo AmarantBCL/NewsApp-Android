@@ -7,16 +7,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
 public class NewsDetailsActivity extends AppCompatActivity {
-    public static final String KEY_PICTURE = "KEY_PICTURE";
-    public static final String KEY_TITLE = "KEY_TITLE";
-    public static final String KEY_DATE = "KEY_DATE";
-    public static final String KEY_TEXT = "KEY_TEXT";
+    public static final String KEY_URL = "KEY_URL";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,19 +22,9 @@ public class NewsDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_news_details);
 
         Intent intent = getIntent();
-        String pictureUrl = intent.getStringExtra(KEY_PICTURE);
-        String title = intent.getStringExtra(KEY_TITLE);
-        String date = intent.getStringExtra(KEY_DATE);
-        String text = intent.getStringExtra(KEY_TEXT);
-
-        ImageView imageView = findViewById(R.id.img_picture);
-        TextView titleView = findViewById(R.id.tv_title);
-        TextView dateView = findViewById(R.id.tv_date);
-        TextView textView = findViewById(R.id.tv_text);
-        Glide.with(this).load(pictureUrl).into(imageView);
-        titleView.setText(title);
-        dateView.setText(date);
-        textView.setText(text);
+        String url = intent.getStringExtra(KEY_URL);
+        WebView webView = findViewById(R.id.web_browser);
+        webView.loadUrl(url);
     }
 
     @Override

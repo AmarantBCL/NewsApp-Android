@@ -2,6 +2,7 @@ package com.example.android.androidacademyviews.model.dto;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 

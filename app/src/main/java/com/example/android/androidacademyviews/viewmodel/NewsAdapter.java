@@ -13,14 +13,23 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.android.androidacademyviews.R;
 import com.example.android.androidacademyviews.model.dto.ArticleDTO;
+import com.example.android.androidacademyviews.utils.DateUtils;
 
 import java.util.List;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     private final LayoutInflater inflater;
-    private final List<ArticleDTO> newsList;
+    private List<ArticleDTO> newsList;
     private final Context context;
     private final OnNewsClickListener onClickListener;
+
+    public List<ArticleDTO> getNewsList() {
+        return newsList;
+    }
+
+    public void setNewsList(List<ArticleDTO> newsList) {
+        this.newsList = newsList;
+    }
 
     public interface OnNewsClickListener {
         void onStateClick(ArticleDTO news, int position);
@@ -42,7 +51,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(NewsAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         ArticleDTO newsItem = newsList.get(position);
-        if (newsItem.getImages().get(1) == null) {
+        if (newsItem.getImages() == null || newsItem.getImages().get(1) == null) {
             holder.headingView.setImageResource(R.drawable.ic_baseline_image_24);
         } else {
             Glide.with(context).load(newsItem.getImages().get(1).getUrl()).into(holder.headingView);
@@ -54,7 +63,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         }
         holder.titleView.setText(newsItem.getTitle());
         holder.previewTextView.setText(newsItem.getPreviewText());
-        holder.dateView.setText(newsItem.getPublishDate().toString());
+        holder.dateView.setText(DateUtils.ago(newsItem.getPublishDate()));
 
         holder.itemView.setOnClickListener(v -> onClickListener.onStateClick(newsItem, position));
     }

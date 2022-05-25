@@ -10,9 +10,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -28,6 +30,7 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -37,6 +40,10 @@ import okhttp3.Response;
 
 public class NewsListActivity extends AppCompatActivity {
     private NewsResponse newsResponse;
+    private String category = "World";
+    private TextView categoryView;
+    private ProgressBar progressBar;
+    private NewsAdapter adapter;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -44,7 +51,11 @@ public class NewsListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_list);
 
-        new Thread(() -> getNewsFromInternet()).start();
+        categoryView = findViewById(R.id.tv_category);
+        progressBar = findViewById(R.id.progress_bar);
+        categoryClick();
+
+        new Thread(this::getNewsFromInternet).start();
     }
 
     @Override
@@ -55,15 +66,14 @@ public class NewsListActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_switch:
-                startActivity(new Intent(this, AboutActivity.class));
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.action_switch) {
+            startActivity(new Intent(this, AboutActivity.class));
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void createRecyclerView() {
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         RecyclerView.LayoutManager layoutManager = (getResources().getConfiguration().orientation
@@ -76,27 +86,23 @@ public class NewsListActivity extends AppCompatActivity {
         recyclerView.addItemDecoration(divider);
         List<ArticleDTO> news = clean();
         NewsAdapter.OnNewsClickListener newsClickListener = createClickListener();
-        NewsAdapter adapter = new NewsAdapter(this, news, newsClickListener);
+        adapter = new NewsAdapter(this, news, newsClickListener);
         recyclerView.setAdapter(adapter);
-        ProgressBar progressBar = findViewById(R.id.progress_bar);
         progressBar.setVisibility(View.GONE);
     }
 
     private NewsAdapter.OnNewsClickListener createClickListener() {
-        NewsAdapter.OnNewsClickListener newsClickListener = new NewsAdapter.OnNewsClickListener() {
-            @Override
-            public void onStateClick(ArticleDTO item, int position) {
-                Intent intent = new Intent(NewsListActivity.this, NewsDetailsActivity.class);
-                intent.putExtra(NewsDetailsActivity.KEY_URL, item.getUrl());
-                startActivity(intent);
-            }
+        NewsAdapter.OnNewsClickListener newsClickListener = (item, position) -> {
+            Intent intent = new Intent(NewsListActivity.this, NewsDetailsActivity.class);
+            intent.putExtra(NewsDetailsActivity.KEY_URL, item.getUrl());
+            startActivity(intent);
         };
         return newsClickListener;
     }
 
     private void getNewsFromInternet() {
         OkHttpClient client = NetworkUtils.buildOkHttp();
-        Request request = NetworkUtils.buildRequest();
+        Request request = NetworkUtils.buildRequest(category);
         Call call = client.newCall(request);
         call.enqueue(new Callback() {
             @Override
@@ -104,27 +110,54 @@ public class NewsListActivity extends AppCompatActivity {
 
             }
 
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 Gson gson = new Gson();
                 String jsonResponse = response.body().string();
                 newsResponse = gson.fromJson(jsonResponse, NewsResponse.class);
                 Handler handler = new Handler(Looper.getMainLooper());
-                handler.post(() -> createRecyclerView());
+                handler.post(() -> {
+                    if (adapter == null) {
+                        createRecyclerView();
+                    } else {
+                        List<ArticleDTO> news = clean();
+                        adapter.setNewsList(news);
+                        progressBar.setVisibility(View.GONE);
+                        adapter.notifyDataSetChanged();
+                    }
+                });
             }
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private List<ArticleDTO> clean() {
         if (newsResponse != null) {
-            List<ArticleDTO> articles = new ArrayList<>();
-            for (ArticleDTO article : newsResponse.getResults()) {
-                if (!article.getPreviewText().isEmpty()) {
-                    articles.add(article);
-                }
-            }
-            return articles;
+            return newsResponse.getResults().stream()
+                    .filter(a -> !a.getPreviewText().isEmpty())
+                    .collect(Collectors.toList());
         }
         return new ArrayList<>();
+    }
+
+    private void categoryClick() {
+        String[] categories = getResources().getStringArray(R.array.news_categories);
+        categoryView.setText(category);
+        categoryView.setOnLongClickListener(v -> {
+            AlertDialog alertDialog = new AlertDialog.Builder(this)
+                    .setSingleChoiceItems(categories, 25, (dialog, which) -> category = categories[which])
+                    .setPositiveButton("OK", (dialog, which) -> {
+                        new Thread(this::getNewsFromInternet).start();
+                        categoryView.setText(category);
+                        progressBar.setVisibility(View.VISIBLE);
+                        adapter.getNewsList().clear();
+                        adapter.notifyDataSetChanged();
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .create();
+            alertDialog.show();
+            return true;
+        });
     }
 }

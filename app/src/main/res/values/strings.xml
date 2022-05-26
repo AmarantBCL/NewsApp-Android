@@ -7,4 +7,5 @@
     <string name="android_text">Android Udacity, Google, Metanit</string>
     <string name="description">Vadym has been in development since 2016. It was a start of his own game server created via Lua language. Afterwards there had been some changes in his perspective and he decided to quit his game experience in 2019. He moved on to C# where he was trying to create an English words trainer and had a success in it. Later on Vadym migrated to Java when he decided to attend the courses in 2021 and 2022. He had discovered Android for himself there.</string>
     <string name="menu_action_switch">About</string>
+    <string name="category_in_menu">Category</string>
 </resources>

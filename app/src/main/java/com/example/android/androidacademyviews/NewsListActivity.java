@@ -4,12 +4,12 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -21,25 +21,12 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.android.androidacademyviews.model.dto.ArticleDTO;
-import com.example.android.androidacademyviews.model.dto.NewsResponse;
 import com.example.android.androidacademyviews.utils.NetworkUtils;
 import com.example.android.androidacademyviews.viewmodel.NewsAdapter;
-import com.google.gson.Gson;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 public class NewsListActivity extends AppCompatActivity {
-    private NewsResponse newsResponse;
     private String category = "World";
     private TextView categoryView;
     private ProgressBar progressBar;
@@ -50,11 +37,10 @@ public class NewsListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_list);
-
         categoryView = findViewById(R.id.tv_category);
         progressBar = findViewById(R.id.progress_bar);
         categoryClick();
-
+        createRecyclerView();
         new Thread(this::getNewsFromInternet).start();
     }
 
@@ -73,7 +59,6 @@ public class NewsListActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public void createRecyclerView() {
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         RecyclerView.LayoutManager layoutManager = (getResources().getConfiguration().orientation
@@ -84,61 +69,26 @@ public class NewsListActivity extends AppCompatActivity {
         DividerItemDecoration divider = new DividerItemDecoration(recyclerView.getContext(),
                 DividerItemDecoration.VERTICAL);
         recyclerView.addItemDecoration(divider);
-        List<ArticleDTO> news = clean();
         NewsAdapter.OnNewsClickListener newsClickListener = createClickListener();
-        adapter = new NewsAdapter(this, news, newsClickListener);
+        adapter = new NewsAdapter(this, new ArrayList<>(), newsClickListener);
         recyclerView.setAdapter(adapter);
-        progressBar.setVisibility(View.GONE);
     }
 
     private NewsAdapter.OnNewsClickListener createClickListener() {
-        NewsAdapter.OnNewsClickListener newsClickListener = (item, position) -> {
+        return (item, position) -> {
             Intent intent = new Intent(NewsListActivity.this, NewsDetailsActivity.class);
             intent.putExtra(NewsDetailsActivity.KEY_URL, item.getUrl());
             startActivity(intent);
         };
-        return newsClickListener;
     }
 
     private void getNewsFromInternet() {
-        OkHttpClient client = NetworkUtils.buildOkHttp();
-        Request request = NetworkUtils.buildRequest(category);
-        Call call = client.newCall(request);
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-
-            }
-
-            @RequiresApi(api = Build.VERSION_CODES.N)
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                Gson gson = new Gson();
-                String jsonResponse = response.body().string();
-                newsResponse = gson.fromJson(jsonResponse, NewsResponse.class);
-                Handler handler = new Handler(Looper.getMainLooper());
-                handler.post(() -> {
-                    if (adapter == null) {
-                        createRecyclerView();
-                    } else {
-                        List<ArticleDTO> news = clean();
-                        adapter.setNewsList(news);
-                        progressBar.setVisibility(View.GONE);
-                        adapter.notifyDataSetChanged();
-                    }
-                });
-            }
-        });
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private List<ArticleDTO> clean() {
-        if (newsResponse != null) {
-            return newsResponse.getResults().stream()
-                    .filter(a -> !a.getPreviewText().isEmpty())
-                    .collect(Collectors.toList());
-        }
-        return new ArrayList<>();
+        NetworkUtils.call(category);
+        NetworkUtils.listener = news -> {
+            adapter.setNewsList(news);
+            progressBar.setVisibility(View.GONE);
+            adapter.notifyDataSetChanged();
+        };
     }
 
     private void categoryClick() {
